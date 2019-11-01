@@ -85,6 +85,12 @@ proc getTagsList(dir: string, meth: DownloadMethod): seq[string] =
     result = @[]
 
 proc getTagsListRemote*(url: string, meth: DownloadMethod): seq[string] =
+  var
+    url = url
+    uri = parseUri url
+  if uri.query != "":
+    uri.query = ""
+    url = $uri
   result = @[]
   case meth
   of DownloadMethod.git:
