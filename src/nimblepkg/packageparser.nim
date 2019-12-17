@@ -277,6 +277,9 @@ proc readPackageInfoFromNimble(path: string; result: var PackageInfo) =
           of "requires":
             for v in ev.value.multiSplit:
               result.requires.add(parseRequires(v.strip))
+          of "foreigndeps":
+            for v in ev.value.multiSplit:
+              result.foreignDeps.add(v.strip)
           else:
             raise newException(NimbleError, "Invalid field: " & ev.key)
         else: raise newException(NimbleError,

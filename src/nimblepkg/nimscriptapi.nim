@@ -45,6 +45,11 @@ proc requires*(deps: varargs[string]) =
   ## package.
   for d in deps: requiresData.add(d)
 
+proc foreignDep*(deps: varargs[string]) =
+  ## Call this to set the list of external dependencies of your Nimble
+  ## package.
+  for d in deps: foreignDeps.add(d)
+
 proc getParams() =
   # Called by nimscriptwrapper.nim:execNimscript()
   #   nim e --flags /full/path/to/file.nims /full/path/to/file.out action
@@ -115,9 +120,12 @@ proc printPkgInfo(): string =
   printSeqIfLen beforeHooks
   printSeqIfLen afterHooks
 
-  if requiresData.len != 0:
+  if requiresData.len != 0 or foreignDeps.len != 0:
     result &= "\n[Deps]\n"
-    result &= &"requires: \"{requiresData.join(\", \")}\"\n"
+    if requiresData.len != 0:
+      result &= &"requires: \"{requiresData.join(\", \")}\"\n"
+    if foreignDeps.len != 0:
+      result &= &"foreignDeps: \"{foreignDeps.join(\", \")}\"\n"
 
 proc onExit*() =
   if "printPkgInfo".normalize in commandLineParams:
